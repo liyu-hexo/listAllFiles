@@ -5,15 +5,11 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-
-	"github.com/google/uuid"
-	"io.xiu/listAllFiles/domian"
-	"io.xiu/listAllFiles/service"
 )
 
 func WalkDir(dir string, waitGroup *sync.WaitGroup, fileSizes chan int64, lock *sync.RWMutex) {
 	defer waitGroup.Done()
-	var files []domian.File
+	// var files []domian.File
 	if cancelled() {
 		return
 	}
@@ -26,13 +22,13 @@ func WalkDir(dir string, waitGroup *sync.WaitGroup, fileSizes chan int64, lock *
 		} else {
 			// 获取文件数
 			file, _ := entry.Info()
-			files = append(files, domian.File{Id: uuid.NewString(), Name: entry.Name(), Path: subdir, Time: file.ModTime().Unix()})
+			// files = append(files, domian.File{Id: uuid.NewString(), Name: entry.Name(), Path: subdir, Time: file.ModTime().Unix()})
 			fileSizes <- file.Size()
 		}
 	}
-	if len(files) != 0 {
-		service.Insert(files, lock)
-	}
+	// if len(files) != 0 {
+	// 	service.Insert(files, lock)
+	// }
 }
 
 var sema = make(chan struct{}, 20)
