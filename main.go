@@ -10,13 +10,18 @@ import (
 	utils "io.xiu/listAllFiles/utils"
 )
 
+var file string
+var dir string
+
 func main() {
 	// 计算耗时
 	defer timeCost()()
+	flag.StringVar(&file, "f", "", "搜索文件")
+	flag.StringVar(&dir, "d", "D:/", "目录")
 	flag.Parse()
 	lock := &sync.RWMutex{}
 	// 确定初始目录
-	roots := os.Args[1:]
+	roots := []string{dir}
 	if len(roots) == 0 {
 		fmt.Println("命令行后跟上目录路径")
 	}
@@ -32,7 +37,7 @@ func main() {
 	for _, root := range roots {
 		fmt.Printf("当前目录为:%s\n", root)
 		n.Add(1)
-		go utils.WalkDir(root, &n, fileSizes, lock)
+		go utils.WalkDir(root, file, &n, fileSizes, lock)
 	}
 	go func() {
 		n.Wait()

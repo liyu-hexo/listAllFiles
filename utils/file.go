@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-func WalkDir(dir string, waitGroup *sync.WaitGroup, fileSizes chan int64, lock *sync.RWMutex) {
+func WalkDir(dir, fileName string, waitGroup *sync.WaitGroup, fileSizes chan int64, lock *sync.RWMutex) {
 	defer waitGroup.Done()
 	// var files []domian.File
 	if cancelled() {
@@ -18,10 +18,15 @@ func WalkDir(dir string, waitGroup *sync.WaitGroup, fileSizes chan int64, lock *
 		subdir = filepath.Join(dir, entry.Name())
 		if entry.IsDir() {
 			waitGroup.Add(1)
-			go WalkDir(subdir, waitGroup, fileSizes, lock)
+			go WalkDir(subdir, fileName, waitGroup, fileSizes, lock)
 		} else {
 			// 获取文件数
 			file, _ := entry.Info()
+			if entry.Name() == fileName {
+				fmt.Printf("Fine %s in Path: ", fileName)
+				fmt.Println(dir)
+				fmt.Println("----------------------------------------")
+			}
 			// files = append(files, domian.File{Id: uuid.NewString(), Name: entry.Name(), Path: subdir, Time: file.ModTime().Unix()})
 			fileSizes <- file.Size()
 		}
