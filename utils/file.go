@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -22,8 +23,8 @@ func WalkDir(dir, fileName string, waitGroup *sync.WaitGroup, fileSizes chan int
 		} else {
 			// 获取文件数
 			file, _ := entry.Info()
-			if entry.Name() == fileName {
-				fmt.Printf("Fine %s in Path: ", fileName)
+			if strings.Contains(entry.Name(), fileName) {
+				fmt.Printf("Fine %s With FileName %s in Path: ", fileName, entry.Name())
 				fmt.Println(dir)
 				fmt.Println("----------------------------------------")
 			}
